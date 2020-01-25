@@ -49,20 +49,25 @@ public class SnackVendingMachine extends VendingMachine {
 
     private void setDisplay() {
         String isAvailable = "False";
+        String item = "";
 
         if (selectedRowKey != Key.KEY_UNKNOWN && selectedColKey != Key.KEY_UNKNOWN) {
 
             if (inventory[row][col].size() > 0) {
                 isAvailable = "True";
             }
+
+            item = items[row][col];
         }
 
         getDisplay().setDisplayContent(
-                String.format("ROW:%s COL:%s\nInserted Amount: %.02f, Required Amount: %.02f\nAvailable: %s",
+                String.format("ROW:%s COL:%s\nInserted Amount: %.02f, Required Amount: %.02f\nItems: %s, Available: %s",
                         selectedRowKey.getStringRepresentation(),
                         selectedColKey.getStringRepresentation(),
                         getPaymentSystem().getInserted(),
-                        selectedItemPrice, isAvailable
+                        selectedItemPrice,
+                        item,
+                        isAvailable
                 )
         );
 
@@ -167,8 +172,9 @@ public class SnackVendingMachine extends VendingMachine {
     }
 
     private ArrayList<PaymentMethod> cancelAction() {
+        ArrayList<PaymentMethod> change = getPaymentSystem().refundAll();
         resetDisplay();
-        return getPaymentSystem().refundAll();
+        return change;
     }
 
     private ArrayList<PaymentMethod> okAction() {

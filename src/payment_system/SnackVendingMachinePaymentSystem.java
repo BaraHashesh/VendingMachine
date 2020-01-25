@@ -143,6 +143,10 @@ public class SnackVendingMachinePaymentSystem extends PaymentSystem {
                 numDenomination = 0;
             }
 
+            // update the amount of change we have
+            this.denominationMap.put(this.acceptableDenomination.get(i),
+                    this.denominationMap.get(this.acceptableDenomination.get(i)) - numDenomination);
+
             for (j = 0; j < numDenomination; j++) {
                 // check if the current denomination is a note
                 if (this.noteSlot.IsAcceptableDomination(
@@ -198,7 +202,10 @@ public class SnackVendingMachinePaymentSystem extends PaymentSystem {
 
             change = this.getInserted() - price;
 
-            return giveChange(change - this.cardSlot.getInUseCard().getValue());
+            if (this.cardSlot.getInUseCard() != null)
+                change -= this.cardSlot.getInUseCard().getValue();
+
+            return giveChange(change);
         } else {
             throw new NotEnoughMoneyException(String.format("The selected item needs %.02f %s, but %.02f was inserted",
                     originalPrice,
